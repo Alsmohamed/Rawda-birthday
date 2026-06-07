@@ -25,6 +25,45 @@
             padding: 20px 0;
         }
 
+        /* شاشة البداية الذكية لتشغيل الصوت فوراً */
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffe5ec 0%, #ffb3c6 100%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .welcome-box {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(228, 130, 153, 0.3);
+            max-width: 400px;
+            width: 85%;
+            animation: pulse 2s infinite;
+        }
+
+        .welcome-box h2 {
+            font-family: 'Reem Kufi', sans-serif;
+            color: #ff477e;
+            margin-bottom: 15px;
+        }
+
+        .welcome-box p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
         /* الحاوية الرئيسية */
         .container {
             text-align: center;
@@ -39,6 +78,7 @@
             position: relative;
             z-index: 10;
             transition: all 0.5s ease;
+            display: none; /* مخفية حتى تضغط على شاشة الاستقبال */
         }
 
         h1 {
@@ -109,7 +149,7 @@
             animation: fadeIn 1.5s ease-in-out forwards;
         }
 
-        /* زر تشغيل المفاجأة والموسيقى */
+        /* زر تشغيل المفاجأة الثانية */
         .magic-btn {
             background: linear-gradient(45deg, #ff477e, #ff7096);
             color: white;
@@ -123,7 +163,6 @@
             box-shadow: 0 8px 20px rgba(255, 71, 126, 0.4);
             margin: 20px 0;
             transition: transform 0.3s, box-shadow 0.3s;
-            animation: pulse 2s infinite;
         }
 
         .magic-btn:hover {
@@ -132,7 +171,7 @@
         }
 
         .main-gift-content {
-            display: none; /* يظهر بعد ضغط الزر */
+            display: none; /* يظهر بعد ضغط الزر التاني يوم 11 */
             animation: fadeIn 1s ease-in-out forwards;
         }
 
@@ -172,7 +211,7 @@
 
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.03); }
             100% { transform: scale(1); }
         }
 
@@ -184,19 +223,23 @@
 </head>
 <body>
 
-    <!-- عنصر الصوت (موسيقى بيانو هادئة رومانسية) -->
-    <!-- يمكنك استبدال الرابط بملف أغنية خاص بك مثل "happy_birthday.mp3" -->
+    <div id="welcome-screen" class="welcome-overlay" onclick="initSite()">
+        <div class="welcome-box">
+            <h2>اضغطي هنا يا ملكتي 🪄✨</h2>
+            <p>هناك مفاجأة بانتظاركِ داخل الرابط...</p>
+        </div>
+    </div>
+
     <audio id="bg-music" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        <source src="1.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="container">
+    <div id="main-container" class="container">
         
         <div class="image-wrapper">
-            <img id="dynamic-image" class="couple-image" src="./image/image1.jpg" alt="روضة">
+            <img id="dynamic-image" class="couple-image" src="image1.jpg" alt="روضة">
         </div>
 
-        <!-- قسم العداد التنازلي -->
         <div id="countdown-section">
             <h1>العد التنازلي لعيد ميلاد روضة 💖</h1>
             <p class="subtitle">كل ثانية بتقربنا لليوم اللي نورتي فيه الدنيا..</p>
@@ -208,13 +251,10 @@
             </div>
         </div>
 
-        <!-- قسم الاحتفال (يظهر يوم 11 يوليو) -->
         <div id="celebration-section" class="celebration-card">
             
-            <!-- الزر السحري لتفعيل الصوت والمفاجأة -->
-            <button id="activate-btn" class="magic-btn" onclick="startTheMagic()">اضغطي هنا يا ملكتي 🪄✨</button>
+            <button id="activate-btn" class="magic-btn" onclick="startTheMagic()">اضغطي لرؤية التهنئة 🎂✨</button>
 
-            <!-- المحتوى الأساسي اللي هيظهر بعد الضغط على الزر -->
             <div id="main-gift" class="main-gift-content">
                 <div class="age-badge">الـ 25 سنة 🎉</div>
                 <h1>عيد ميلاد سعيد يا أحلى روضة في الدنيا! 🎂💖</h1>
@@ -230,57 +270,70 @@
     <script>
         // تاريخ عيد الميلاد (11 يوليو 2026)
         const birthdayDate = new Date(2026, 6, 11, 0, 0, 0).getTime();
-        // const birthdayDate = new Date(2026, 5, 7, 0, 0, 0).getTime();
-
 
         const countdownSection = document.getElementById('countdown-section');
         const celebrationSection = document.getElementById('celebration-section');
         const dynamicImage = document.getElementById('dynamic-image');
         const music = document.getElementById('bg-music');
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const mainContainer = document.getElementById('main-container');
 
         const preBirthdayImage = "image1.jpg"; 
         const birthdayImage = "image2.jpg";    
 
-        dynamicImage.src = preBirthdayImage;
+        // دالة تشغيل الموقع والأغنية معاً فور الضغط على الشاشة الافتتاحية
+        function initSite() {
+            // إخفاء شاشة الاستقبال وإظهار محتوى الموقع
+            welcomeScreen.style.opacity = '0';
+            setTimeout(() => {
+                welcomeScreen.style.display = 'none';
+                mainContainer.style.display = 'block';
+                mainContainer.style.animation = 'fadeIn 1s ease-in-out forwards';
+            }, 500);
 
-        const timer = setInterval(function() {
-            const now = new Date().getTime();
-            const distance = birthdayDate - now;
+            // 🌟 الخدعة البرمجية: إجبار الأغنية على البدء من الثانية 20 فوراً
+            music.currentTime = 23;
 
-            // عند انتهاء العداد ووصول يوم الاحتفال
-            if (distance <= 0) {
-                clearInterval(timer);
-                
-                countdownSection.style.display = 'none'; 
-                dynamicImage.src = birthdayImage;       
-                celebrationSection.style.display = 'block'; 
-                return;
-            }
-
-            // حساب الوقت المتبقي
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            // عرض العداد
-            document.getElementById('days').innerHTML = String(days).padStart(2, '0');
-            document.getElementById('hours').innerHTML = String(hours).padStart(2, '0');
-            document.getElementById('minutes').innerHTML = String(minutes).padStart(2, '0');
-            document.getElementById('seconds').innerHTML = String(seconds).padStart(2, '0');
-
-        }, 1000);
-
-        // الدالة السحرية التي تعمل عند ضغط الزر
-        function startTheMagic() {
-            // 1. تشغيل الموسيقى
-            music.play().catch(error => console.log("تحتاج المتصفحات لتفاعل لتشغيل الصوت:", error));
+            // تشغيل الأغنية فوراً
+            music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
             
-            // 2. إخفاء الزر وإظهار التهنئة
+            // بدء تشغيل العداد
+            startCountdown();
+        }
+
+        function startCountdown() {
+            const timer = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = birthdayDate - now;
+
+                // عند انتهاء العداد ووصول يوم الاحتفال
+                if (distance <= 0) {
+                    clearInterval(timer);
+                    countdownSection.style.display = 'none'; 
+                    dynamicImage.src = birthdayImage;       
+                    celebrationSection.style.display = 'block'; 
+                    return;
+                }
+
+                // حساب الوقت المتبقي
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // عرض العداد
+                document.getElementById('days').innerHTML = String(days).padStart(2, '0');
+                document.getElementById('hours').innerHTML = String(hours).padStart(2, '0');
+                document.getElementById('minutes').innerHTML = String(minutes).padStart(2, '0');
+                document.getElementById('seconds').innerHTML = String(seconds).padStart(2, '0');
+
+            }, 1000);
+        }
+
+        // الدالة السحرية للتهنئة النهائية وتأثيرات القلوب
+        function startTheMagic() {
             document.getElementById('activate-btn').style.display = 'none';
             document.getElementById('main-gift').style.display = 'block';
-            
-            // 3. تشغيل تساقط القلوب والبلالين
             setInterval(createHeart, 300);
         }
 
@@ -298,13 +351,6 @@
             document.body.appendChild(heart);
             setTimeout(() => { heart.remove(); }, 5000);
         }
-
-        /* 💡 للتجربة الفورية ومعاينة شكل الصفحة والزر والموسيقى الآن:
-           احذف علامات الـ // من السطور الـ 3 اللي تحت دي:
-        */
-        // countdownSection.style.display = 'none';
-        // dynamicImage.src = birthdayImage;
-        // celebrationSection.style.display = 'block'; 
     </script>
 </body>
 </html>
