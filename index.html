@@ -177,7 +177,8 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: opacity 0.8s ease-in-out;
+            transition: opacity 0.6s ease-in-out;
+            opacity: 1;
         }
 
         /* العداد التنازلي */
@@ -364,8 +365,7 @@
 كل سنه وانتي الي الله اقرب كل تلايام وانتي وسطنا ومعانا ♥️♥️
 اليوم ده ليكون احلي يوم في حياتي وده عشان اليوم اللي جيه في احلي بنوته في العالم كله حياتي كلها متغيره للاحلي من يوم مخت القرار وحبيتك فيه ♥️♥️
 بحبك جدا جدا ومقدرش استغني عنك ابدا 
-كل سنه وانتي حبيبتي ونور عيني 👑💍♥️♥️🫂
-<br>
+كل سنه وانتي حبيبتي ونور عيني 👑💍♥️♥️🫂<br>
 
                     كل سنة وأنتِ منورة حياتي، وكل سنة وأنتِ خطيبتي وحبيبتي وملكتي.. <br>
                     العمر كله ليكي في سعادة ونجاح، ويارب السنين الجاية كلها نكون سوا ونحقق كل اللي بنتمناه. 💍✨
@@ -387,54 +387,45 @@
         const welcomeScreen = document.getElementById('welcome-screen');
         const mainContainer = document.getElementById('main-container');
 
-        const preBirthdayImage = "image1.jpg"; 
-        const birthdayImage = "image2.jpg";    
+        // إعدادات الصور المتغيرة
+        let currentImageIndex = 2; // يبدأ من image2.jpg
+        const maxImageIndex = 10;  // ينتهي عند image10.jpg
+        let imageInterval;
 
-        // التحقق من السؤال الأول
+        // التحقق من الأسئلة
         function checkQuiz1() {
             const day = document.getElementById('day-1').value;
             const month = document.getElementById('month-1').value;
             const year = document.getElementById('year-1').value;
-            
             if (day === "26" && month === "07" && year === "2021") {
                 document.getElementById('error-1').style.display = 'none';
                 document.getElementById('step-1').classList.remove('active');
                 document.getElementById('step-2').classList.add('active');
-            } else {
-                document.getElementById('error-1').style.display = 'block';
-            }
+            } else { document.getElementById('error-1').style.display = 'block'; }
         }
 
-        // التحقق من السؤال الثاني
         function checkQuiz2() {
             const day = document.getElementById('day-2').value;
             const month = document.getElementById('month-2').value;
             const year = document.getElementById('year-2').value;
-            
             if (day === "27" && month === "07" && year === "2021") {
                 document.getElementById('error-2').style.display = 'none';
                 document.getElementById('step-2').classList.remove('active');
                 document.getElementById('step-3').classList.add('active');
-            } else {
-                document.getElementById('error-2').style.display = 'block';
-            }
+            } else { document.getElementById('error-2').style.display = 'block'; }
         }
 
-        // التحقق من السؤال الثالث والدخول
         function checkQuiz3() {
             const day = document.getElementById('day-3').value;
             const month = document.getElementById('month-3').value;
             const year = document.getElementById('year-3').value;
-            
             if (day === "10" && month === "04" && year === "2026") {
                 document.getElementById('error-3').style.display = 'none';
                 initSite();
-            } else {
-                document.getElementById('error-3').style.display = 'block';
-            }
+            } else { document.getElementById('error-3').style.display = 'block'; }
         }
 
-        // دالة تشغيل الموقع واختيار الأغنية المناسبة للتاريخ وبدء زمنها المخصص
+        // تشغيل الموقع والأغاني حسب التاريخ
         function initSite() {
             welcomeScreen.style.opacity = '0';
             setTimeout(() => {
@@ -447,34 +438,54 @@
             const distance = birthdayDate - now;
 
             if (distance <= 0) {
-                // إذا كنا في يوم 11 يوليو أو بعده: تشغيل الملف الجديد 2.mp3 من الثانية 27
                 musicSource.src = "2.mp3";
                 music.load();
                 music.addEventListener('canplaythrough', function onCanPlay2() {
                     music.currentTime = 27;
-                    music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+                    music.play().catch(error => console.log(error));
                     music.removeEventListener('canplaythrough', onCanPlay2);
                 });
                 if (music.readyState >= 3) {
                     music.currentTime = 27;
-                    music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+                    music.play().catch(error => console.log(error));
                 }
             } else {
-                // إذا كنا قبل يوم 11 يوليو: تشغيل الملف الأول 1.mp3 من الثانية 13
                 musicSource.src = "1.mp3";
                 music.load();
                 music.addEventListener('canplaythrough', function onCanPlay1() {
                     music.currentTime = 13;
-                    music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+                    music.play().catch(error => console.log(error));
                     music.removeEventListener('canplaythrough', onCanPlay1);
                 });
                 if (music.readyState >= 3) {
                     music.currentTime = 13;
-                    music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+                    music.play().catch(error => console.log(error));
                 }
             }
-            
             startCountdown();
+        }
+
+        // دالة تغيير الصور كل 10 ثوانٍ بنعومة
+        function startImageSlideshow() {
+            if (imageInterval) clearInterval(imageInterval);
+            
+            // تعيين الصورة الأولى فوراً عند بدء الاحتفال
+            dynamicImage.src = `image${currentImageIndex}.jpg`;
+
+            imageInterval = setInterval(() => {
+                currentImageIndex++;
+                if (currentImageIndex > maxImageIndex) {
+                    currentImageIndex = 2; // يعود لـ image2 بعد 10
+                }
+                
+                // تأثير الاختفاء والظهور الناعم عند التبديل
+                dynamicImage.style.opacity = '0';
+                setTimeout(() => {
+                    dynamicImage.src = `image${currentImageIndex}.jpg`;
+                    dynamicImage.style.opacity = '1';
+                }, 600); 
+
+            }, 10000); // 10000 ميلي ثانية = 10 ثوانٍ
         }
 
         function startCountdown() {
@@ -485,21 +496,22 @@
                 if (distance <= 0) {
                     clearInterval(timer);
                     countdownSection.style.display = 'none'; 
-                    dynamicImage.src = birthdayImage;       
                     celebrationSection.style.display = 'block'; 
                     
-                    // تغيير الأغنية تلقائياً إلى 2.mp3 وبدء التوقيت من الثانية 27 إذا انتهى العداد وهي بداخل الصفحة
+                    // تشغيل ألبوم الصور الاحتفالي
+                    startImageSlideshow();
+                    
                     if (!musicSource.src.includes("2.mp3")) {
                         musicSource.src = "2.mp3";
                         music.load();
                         music.addEventListener('canplaythrough', function onCanPlayLive() {
                             music.currentTime = 27;
-                            music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+                            music.play().catch(error => console.log(error));
                             music.removeEventListener('canplaythrough', onCanPlayLive);
                         });
                         if (music.readyState >= 3) {
                             music.currentTime = 27;
-                            music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+                            music.play().catch(error => console.log(error));
                         }
                     }
                     return;
@@ -527,14 +539,11 @@
         function createHeart() {
             const heart = document.createElement('div');
             heart.classList.add('heart');
-            
-            const shapes = ['❤️', '💖', '🎈', '🌸', '✨', '🎉','♥️','💘','❤️', '💖', '🎈', '🌸', '✨', '🎉','♥️','💘'];
+            const shapes = ['❤️', '💖', '🎈', '🌸', '✨', '🎉','♥️','💘'];
             heart.innerText = shapes[Math.floor(Math.random() * shapes.length)];
-            
             heart.style.left = Math.random() * 95 + 'vw'; 
             heart.style.animationDuration = Math.random() * 3 + 2 + 's';
             heart.style.fontSize = Math.random() * 20 + 15 + 'px';
-            
             document.body.appendChild(heart);
             setTimeout(() => { heart.remove(); }, 5000);
         }
