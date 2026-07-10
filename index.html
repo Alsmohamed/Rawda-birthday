@@ -25,7 +25,7 @@
             padding: 20px 0;
         }
 
-        /* شاشة البداية الذكية لتشغيل الصوت فوراً */
+        /* شاشة البداية والأسئلة */
         .welcome-overlay {
             position: fixed;
             top: 0;
@@ -38,30 +38,95 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            cursor: pointer;
             transition: opacity 0.5s ease-out;
         }
 
         .welcome-box {
             text-align: center;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 35px 25px;
             border-radius: 24px;
             box-shadow: 0 15px 35px rgba(228, 130, 153, 0.3);
-            max-width: 400px;
+            max-width: 450px;
             width: 85%;
-            animation: pulse 2s infinite;
         }
 
         .welcome-box h2 {
             font-family: 'Reem Kufi', sans-serif;
             color: #ff477e;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 1.6rem;
         }
 
-        .welcome-box p {
-            color: #6c757d;
+        .quiz-group {
+            margin-bottom: 25px;
+            text-align: right;
+            display: none;
+        }
+
+        .quiz-group.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .quiz-label {
+            font-weight: bold;
+            color: #4a4a4a;
+            margin-bottom: 10px;
+            display: block;
             font-size: 1.1rem;
+        }
+
+        .date-select-container {
+            display: flex;
+            gap: 8px;
+            direction: ltr;
+        }
+
+        select {
+            font-family: 'Cairo', sans-serif;
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #ffb3c6;
+            border-radius: 12px;
+            outline: none;
+            font-size: 1rem;
+            color: #333;
+            background: white;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: #ff477e;
+        }
+
+        .quiz-btn {
+            background: linear-gradient(45deg, #ff477e, #ff7096);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 71, 126, 0.3);
+            margin-top: 10px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .quiz-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 71, 126, 0.5);
+        }
+
+        .error-msg {
+            color: #d90429;
+            font-size: 0.95rem;
+            margin-top: 10px;
+            display: none;
+            font-weight: bold;
         }
 
         /* الحاوية الرئيسية */
@@ -78,7 +143,7 @@
             position: relative;
             z-index: 10;
             transition: all 0.5s ease;
-            display: none; /* مخفية حتى تضغط على شاشة الاستقبال */
+            display: none;
         }
 
         h1 {
@@ -95,7 +160,7 @@
             margin-bottom: 25px;
         }
 
-        /* إطار الصورة الذكي المتغير */
+        /* إطار الصورة */
         .image-wrapper {
             width: 100%;
             max-height: 600px;
@@ -149,7 +214,6 @@
             animation: fadeIn 1.5s ease-in-out forwards;
         }
 
-        /* زر تشغيل المفاجأة الثانية */
         .magic-btn {
             background: linear-gradient(45deg, #ff477e, #ff7096);
             color: white;
@@ -171,7 +235,7 @@
         }
 
         .main-gift-content {
-            display: none; /* يظهر بعد ضغط الزر التاني يوم 11 */
+            display: none;
             animation: fadeIn 1s ease-in-out forwards;
         }
 
@@ -203,16 +267,9 @@
             z-index: 100;
         }
 
-        /* الأنيمايشن */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
         }
 
         @keyframes fall {
@@ -223,15 +280,53 @@
 </head>
 <body>
 
-    <div id="welcome-screen" class="welcome-overlay" onclick="initSite()">
+    <!-- شاشة الأسئلة الذكية قبل الدخول للموقع -->
+    <div id="welcome-screen" class="welcome-overlay">
         <div class="welcome-box">
-            <h2>دوسي هنا يا حبيبتي 💖💖</h2>
-            <p>هناك مفاجأة بانتظاركِ داخل الرابط...</p>
+            <h2>ثواني يا حبيبتي.. للتأكد من الهوية الملكية 💖🔐</h2>
+            
+            <!-- السؤال الأول -->
+            <div id="step-1" class="quiz-group active">
+                <label class="quiz-label">تاريخ يوم اعتراف علاء بحبه ليكي؟ 🙈</label>
+                <div class="date-select-container">
+                    <select id="year-1"><option value="">السنة</option><script>for(let y=2020;y<=2026;y++) document.write(`<option value="${y}">${y}</option>`);</script></select>
+                    <select id="month-1"><option value="">الشهر</option><script>for(let m=1;m<=12;m++) document.write(`<option value="${String(m).padStart(2,'0')}">${String(m).padStart(2,'0')}</option>`);</script></select>
+                    <select id="day-1"><option value="">اليوم</option><script>for(let d=1;d<=31;d++) document.write(`<option value="${String(d).padStart(2,'0')}">${String(d).padStart(2,'0')}</option>`);</script></select>
+                </div>
+                <button class="quiz-btn" onclick="checkQuiz1()">التالي ✨</button>
+                <p id="error-1" class="error-msg">امممم متأكدة؟ فكري تاني كدة يا روحي 🥺❤️</p>
+            </div>
+
+            <!-- السؤال الثاني -->
+            <div id="step-2" class="quiz-group">
+                <label class="quiz-label">تاريخ أول مرة روضة قالت لعلاء بحبك؟ 🥰❤️</label>
+                <div class="date-select-container">
+                    <select id="year-2"><option value="">السنة</option><script>for(let y=2020;y<=2026;y++) document.write(`<option value="${y}">${y}</option>`);</script></select>
+                    <select id="month-2"><option value="">الشهر</option><script>for(let m=1;m<=12;m++) document.write(`<option value="${String(m).padStart(2,'0')}">${String(m).padStart(2,'0')}</option>`);</script></select>
+                    <select id="day-2"><option value="">اليوم</option><script>for(let d=1;d<=31;d++) document.write(`<option value="${String(d).padStart(2,'0')}">${String(d).padStart(2,'0')}</option>`);</script></select>
+                </div>
+                <button class="quiz-btn" onclick="checkQuiz2()">التالي ✨</button>
+                <p id="error-2" class="error-msg">ثانية واحدة.. دي أحلى كلمة اتقالت! افتكري كويس 😉💞</p>
+            </div>
+
+            <!-- السؤال الثالث -->
+            <div id="step-3" class="quiz-group">
+                <label class="quiz-label">تاريخ يوم قراية الفاتحة بتاعتنا؟ 💍✨</label>
+                <div class="date-select-container">
+                    <select id="year-3"><option value="">السنة</option><script>for(let y=2020;y<=2026;y++) document.write(`<option value="${y}">${y}</option>`);</script></select>
+                    <select id="month-3"><option value="">الشهر</option><script>for(let m=1;m<=12;m++) document.write(`<option value="${String(m).padStart(2,'0')}">${String(m).padStart(2,'0')}</option>`);</script></select>
+                    <select id="day-3"><option value="">اليوم</option><script>for(let d=1;d<=31;d++) document.write(`<option value="${String(d).padStart(2,'0')}">${String(d).padStart(2,'0')}</option>`);</script></select>
+                </div>
+                <button class="quiz-btn" onclick="checkQuiz3()">دخول للمفاجأة 🪄💖</button>
+                <p id="error-3" class="error-msg">مش ممكن تكوني نسيتي اليوم ده! ركزي كدة بقا 😂♥️</p>
+            </div>
+
         </div>
     </div>
 
+    <!-- عنصر الصوت المبدئي -->
     <audio id="bg-music" loop>
-        <source src="1.mp3" type="audio/mpeg">
+        <source id="music-source" src="1.mp3" type="audio/mpeg">
     </audio>
 
     <div id="main-container" class="container">
@@ -241,10 +336,8 @@
         </div>
 
         <div id="countdown-section">
-            <h1 >كل ثانية بتقربنا لليوم اللي نورتي فيه الدنيا..💖💘</h1>
-            <P class="subtitle">العد التنازلي لعيد ميلاد روضة </P>
-            <!-- <h1>العد التنازلي لعيد ميلاد روضة 💖</h1>
-            <p class="subtitle">كل ثانية بتقربنا لليوم اللي نورتي فيه الدنيا..</p> -->
+            <h1>كل ثانية بتقربنا لليوم اللي نورتي فيه الدنيا..💖💘</h1>
+            <p class="subtitle">العد التنازلي لعيد ميلاد روضة</p>
             <div class="countdown">
                 <div class="time-box"><span id="days">00</span><label>أيام</label></div>
                 <div class="time-box"><span id="hours">00</span><label>ساعات</label></div>
@@ -261,6 +354,19 @@
                 <div class="age-badge">الـ 25 سنة 🎉</div>
                 <h1>عيد ميلاد سعيد يا أحلى روضة في الدنيا! 🎂💖</h1>
                 <p class="love-message">
+اول عيد ميلاد ليكي واحنا مخطوبين السنه اللي فاتت قولتلك باذن الله السنه الجايه نكون مخطوبين والحمد لله ربنا كرمنا واتخطبنا ♥️♥️
+بس السنادي مش هقولك باذن الله السنه الجايه نكون متجوزين عشان ده كده كده امر واقع وهيحصل باذن الله ✨❤️❤️
+انا بحبك جدا جدا واتمني فعلا ان اكمل حياتي معاكي وبتمني انك فعلا متخبيش عليا حاجه وانا واثق فيكي جدا جدا جدا 🙏🙏❤️
+
+بحب علاقتي بيكي جدا كل حاجه بنعملها سوه كل حاجه حصلت بنا لمعه عيونك لما بتشوفيني وانتي تستاهلي كل الحلو يا حبيبي ♥️♥️
+
+كل سنه وانتي طيبه يا احلي روض في الدنيا يا ست البنات يا احلاهم واجدعهم 
+كل سنه وانتي الي الله اقرب كل تلايام وانتي وسطنا ومعانا ♥️♥️
+اليوم ده ليكون احلي يوم في حياتي وده عشان اليوم اللي جيه في احلي بنوته في العالم كله حياتي كلها متغيره للاحلي من يوم مخت القرار وحبيتك فيه ♥️♥️
+بحبك جدا جدا ومقدرش استغني عنك ابدا 
+كل سنه وانتي حبيبتي ونور عيني 👑💍♥️♥️🫂
+<br>
+
                     كل سنة وأنتِ منورة حياتي، وكل سنة وأنتِ خطيبتي وحبيبتي وملكتي.. <br>
                     العمر كله ليكي في سعادة ونجاح، ويارب السنين الجاية كلها نكون سوا ونحقق كل اللي بنتمناه. 💍✨
                 </p>
@@ -277,15 +383,59 @@
         const celebrationSection = document.getElementById('celebration-section');
         const dynamicImage = document.getElementById('dynamic-image');
         const music = document.getElementById('bg-music');
+        const musicSource = document.getElementById('music-source');
         const welcomeScreen = document.getElementById('welcome-screen');
         const mainContainer = document.getElementById('main-container');
 
         const preBirthdayImage = "image1.jpg"; 
         const birthdayImage = "image2.jpg";    
 
-        // دالة تشغيل الموقع والأغنية معاً فور الضغط على الشاشة الافتتاحية
+        // التحقق من السؤال الأول
+        function checkQuiz1() {
+            const day = document.getElementById('day-1').value;
+            const month = document.getElementById('month-1').value;
+            const year = document.getElementById('year-1').value;
+            
+            if (day === "26" && month === "07" && year === "2021") {
+                document.getElementById('error-1').style.display = 'none';
+                document.getElementById('step-1').classList.remove('active');
+                document.getElementById('step-2').classList.add('active');
+            } else {
+                document.getElementById('error-1').style.display = 'block';
+            }
+        }
+
+        // التحقق من السؤال الثاني
+        function checkQuiz2() {
+            const day = document.getElementById('day-2').value;
+            const month = document.getElementById('month-2').value;
+            const year = document.getElementById('year-2').value;
+            
+            if (day === "27" && month === "07" && year === "2021") {
+                document.getElementById('error-2').style.display = 'none';
+                document.getElementById('step-2').classList.remove('active');
+                document.getElementById('step-3').classList.add('active');
+            } else {
+                document.getElementById('error-2').style.display = 'block';
+            }
+        }
+
+        // التحقق من السؤال الثالث والدخول
+        function checkQuiz3() {
+            const day = document.getElementById('day-3').value;
+            const month = document.getElementById('month-3').value;
+            const year = document.getElementById('year-3').value;
+            
+            if (day === "10" && month === "04" && year === "2026") {
+                document.getElementById('error-3').style.display = 'none';
+                initSite();
+            } else {
+                document.getElementById('error-3').style.display = 'block';
+            }
+        }
+
+        // دالة تشغيل الموقع واختيار الأغنية المناسبة للتاريخ وبدء زمنها المخصص
         function initSite() {
-            // إخفاء شاشة الاستقبال وإظهار محتوى الموقع
             welcomeScreen.style.opacity = '0';
             setTimeout(() => {
                 welcomeScreen.style.display = 'none';
@@ -293,13 +443,37 @@
                 mainContainer.style.animation = 'fadeIn 1s ease-in-out forwards';
             }, 500);
 
-            // 🌟 الخدعة البرمجية: إجبار الأغنية على البدء من الثانية 20 فوراً
-            music.currentTime = 13;
+            const now = new Date().getTime();
+            const distance = birthdayDate - now;
 
-            // تشغيل الأغنية فوراً
-            music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+            if (distance <= 0) {
+                // إذا كنا في يوم 11 يوليو أو بعده: تشغيل الملف الجديد 2.mp3 من الثانية 27
+                musicSource.src = "2.mp3";
+                music.load();
+                music.addEventListener('canplaythrough', function onCanPlay2() {
+                    music.currentTime = 27;
+                    music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+                    music.removeEventListener('canplaythrough', onCanPlay2);
+                });
+                if (music.readyState >= 3) {
+                    music.currentTime = 27;
+                    music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+                }
+            } else {
+                // إذا كنا قبل يوم 11 يوليو: تشغيل الملف الأول 1.mp3 من الثانية 13
+                musicSource.src = "1.mp3";
+                music.load();
+                music.addEventListener('canplaythrough', function onCanPlay1() {
+                    music.currentTime = 13;
+                    music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+                    music.removeEventListener('canplaythrough', onCanPlay1);
+                });
+                if (music.readyState >= 3) {
+                    music.currentTime = 13;
+                    music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+                }
+            }
             
-            // بدء تشغيل العداد
             startCountdown();
         }
 
@@ -308,22 +482,34 @@
                 const now = new Date().getTime();
                 const distance = birthdayDate - now;
 
-                // عند انتهاء العداد ووصول يوم الاحتفال
                 if (distance <= 0) {
                     clearInterval(timer);
                     countdownSection.style.display = 'none'; 
                     dynamicImage.src = birthdayImage;       
                     celebrationSection.style.display = 'block'; 
+                    
+                    // تغيير الأغنية تلقائياً إلى 2.mp3 وبدء التوقيت من الثانية 27 إذا انتهى العداد وهي بداخل الصفحة
+                    if (!musicSource.src.includes("2.mp3")) {
+                        musicSource.src = "2.mp3";
+                        music.load();
+                        music.addEventListener('canplaythrough', function onCanPlayLive() {
+                            music.currentTime = 27;
+                            music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+                            music.removeEventListener('canplaythrough', onCanPlayLive);
+                        });
+                        if (music.readyState >= 3) {
+                            music.currentTime = 27;
+                            music.play().catch(error => console.log("خطأ في تشغيل الصوت:", error));
+                        }
+                    }
                     return;
                 }
 
-                // حساب الوقت المتبقي
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                // عرض العداد
                 document.getElementById('days').innerHTML = String(days).padStart(2, '0');
                 document.getElementById('hours').innerHTML = String(hours).padStart(2, '0');
                 document.getElementById('minutes').innerHTML = String(minutes).padStart(2, '0');
@@ -332,7 +518,6 @@
             }, 1000);
         }
 
-        // الدالة السحرية للتهنئة النهائية وتأثيرات القلوب
         function startTheMagic() {
             document.getElementById('activate-btn').style.display = 'none';
             document.getElementById('main-gift').style.display = 'block';
@@ -343,7 +528,7 @@
             const heart = document.createElement('div');
             heart.classList.add('heart');
             
-            const shapes = ['❤️', '💖', '🎈', '🌸', '✨', '🎉','♥️','💘','❤️', '💖', '🎈', '🌸', '✨', '🎉','♥️','💘','❤️', '💖', '🎈', '🌸', '✨', '🎉','♥️','💘'];
+            const shapes = ['❤️', '💖', '🎈', '🌸', '✨', '🎉','♥️','💘','❤️', '💖', '🎈', '🌸', '✨', '🎉','♥️','💘'];
             heart.innerText = shapes[Math.floor(Math.random() * shapes.length)];
             
             heart.style.left = Math.random() * 95 + 'vw'; 
